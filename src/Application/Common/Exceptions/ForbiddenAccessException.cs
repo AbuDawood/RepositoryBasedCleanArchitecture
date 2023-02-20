@@ -1,6 +1,14 @@
-﻿namespace CleanArchitecture.Application.Common.Exceptions;
+﻿using CleanArchitecture.Domain.Common;
 
-public class ForbiddenAccessException : Exception
+namespace CleanArchitecture.Application.Common.Exceptions;
+
+
+public class ForbiddenAccessException : Exception, IUserFriendlyException
 {
-    public ForbiddenAccessException() : base() { }
+    public ForbiddenAccessException(string? friendlyMessage = null) : base()
+    {
+        FriendlyMessage = friendlyMessage;
+    }
+
+    public string? FriendlyMessage { get; }
 }

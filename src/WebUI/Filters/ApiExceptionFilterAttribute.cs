@@ -1,9 +1,16 @@
 ﻿using CleanArchitecture.Application.Common.Exceptions;
-
+using CleanArchitecture.Domain.Common;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace CleanArchitecture.WebUI.Filters;
+
+
+public class FriendlyProblemDetails : ProblemDetails
+{
+    //TODO-UserFriendly [NOT HIGHLY DEMANDED]adding the optional exception details and stacktrace
+    public string? Message { get; set; }
+}
 
 public class ApiExceptionFilterAttribute : ExceptionFilterAttribute
 {
@@ -37,10 +44,41 @@ public class ApiExceptionFilterAttribute : ExceptionFilterAttribute
             return;
         }
 
+        if (type.IsSubclassOf(typeof(BusinessException)))
+        {
+            HandleForbiddenAccessException(context);
+            return;
+        }
+
         if (!context.ModelState.IsValid)
         {
             HandleInvalidModelStateException(context);
             return;
+        }
+
+        HandleOpenUnhandledException(context);
+    }
+
+    private void HandleOpenUnhandledException(ExceptionContext context)
+    {
+        if (_exceptionHandlers.All(e => e.Key != context.Exception.GetType()))
+        {
+            var details = new FriendlyProblemDetails
+            {
+                Status = StatusCodes.Status500InternalServerError,
+                Type = "https://tools.ietf.org/html/rfc7231#section-6.6.1",
+                Title = "خطأ داخلي",
+                //Detail = "",
+                Message = "حدث خطأ داخلي، حاول مرة أخرى أو تواصل مع الإدارة",
+            };
+
+            context.Result = new ObjectResult(details)
+            {
+                StatusCode = StatusCodes.Status500InternalServerError,
+            };
+
+
+            context.ExceptionHandled = true;
         }
     }
 
@@ -58,6 +96,7 @@ public class ApiExceptionFilterAttribute : ExceptionFilterAttribute
         context.ExceptionHandled = true;
     }
 
+    //It performed inside midleware
     private void HandleInvalidModelStateException(ExceptionContext context)
     {
         var details = new ValidationProblemDetails(context.ModelState)
@@ -74,11 +113,12 @@ public class ApiExceptionFilterAttribute : ExceptionFilterAttribute
     {
         var exception = (NotFoundException)context.Exception;
 
-        var details = new ProblemDetails()
+        var details = new FriendlyProblemDetails
         {
             Type = "https://tools.ietf.org/html/rfc7231#section-6.5.4",
             Title = "The specified resource was not found.",
-            Detail = exception.Message
+            Detail = exception.Message,
+            Message = exception.FriendlyMessage,
         };
 
         context.Result = new NotFoundObjectResult(details);
@@ -86,13 +126,15 @@ public class ApiExceptionFilterAttribute : ExceptionFilterAttribute
         context.ExceptionHandled = true;
     }
 
+    //It performed inside midleware
     private void HandleUnauthorizedAccessException(ExceptionContext context)
     {
-        var details = new ProblemDetails
+
+        var details = new FriendlyProblemDetails
         {
             Status = StatusCodes.Status401Unauthorized,
             Title = "Unauthorized",
-            Type = "https://tools.ietf.org/html/rfc7235#section-3.1"
+            Type = "https://tools.ietf.org/html/rfc7235#section-3.1",
         };
 
         context.Result = new ObjectResult(details)
@@ -105,11 +147,14 @@ public class ApiExceptionFilterAttribute : ExceptionFilterAttribute
 
     private void HandleForbiddenAccessException(ExceptionContext context)
     {
-        var details = new ProblemDetails
+        IUserFriendlyException exception = (IUserFriendlyException)context.Exception;
+
+        var details = new FriendlyProblemDetails
         {
             Status = StatusCodes.Status403Forbidden,
             Title = "Forbidden",
-            Type = "https://tools.ietf.org/html/rfc7231#section-6.5.3"
+            Type = "https://tools.ietf.org/html/rfc7231#section-6.5.3",
+            Message = exception?.FriendlyMessage,
         };
 
         context.Result = new ObjectResult(details)

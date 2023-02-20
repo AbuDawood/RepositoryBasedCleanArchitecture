@@ -1,10 +1,10 @@
-﻿using System.Linq.Expressions;
-using System.Linq;
-using System.Linq.Dynamic.Core;
+﻿using System.Linq.Dynamic.Core;
+using System.Linq.Expressions;
 using CleanArchitecture.Domain.Common;
 using CleanArchitecture.Domain.Foundations.BaseRepositories;
 using Microsoft.EntityFrameworkCore;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+
+
 
 namespace CleanArchitecture.Infrastructure.Persistence.EntityFrameworkRepositories.Base;
 
