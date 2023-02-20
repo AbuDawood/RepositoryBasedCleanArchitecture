@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using CleanArchitecture.Application.Common.Mappings;
-using CleanArchitecture.Domain.Entities;
+using CleanArchitecture.Domain.Entities.Todos;
 
 namespace CleanArchitecture.Application.TodoLists.Queries.GetTodos;
 

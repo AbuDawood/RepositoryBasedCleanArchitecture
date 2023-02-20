@@ -2,7 +2,7 @@
 using CleanArchitecture.Application.TodoItems.Commands.CreateTodoItem;
 using CleanArchitecture.Application.TodoItems.Commands.UpdateTodoItem;
 using CleanArchitecture.Application.TodoLists.Commands.CreateTodoList;
-using CleanArchitecture.Domain.Entities;
+using CleanArchitecture.Domain.Entities.Todos;
 using FluentAssertions;
 using NUnit.Framework;
 

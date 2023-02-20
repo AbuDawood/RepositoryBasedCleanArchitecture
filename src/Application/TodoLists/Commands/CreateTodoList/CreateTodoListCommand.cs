@@ -1,5 +1,5 @@
 ﻿using CleanArchitecture.Application.Common.Interfaces;
-using CleanArchitecture.Domain.Entities;
+using CleanArchitecture.Domain.Entities.Todos;
 using MediatR;
 
 namespace CleanArchitecture.Application.TodoLists.Commands.CreateTodoList;

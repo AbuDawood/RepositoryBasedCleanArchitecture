@@ -1,5 +1,5 @@
 ﻿using CleanArchitecture.Application.TodoLists.Queries.GetTodos;
-using CleanArchitecture.Domain.Entities;
+using CleanArchitecture.Domain.Entities.Todos;
 using CleanArchitecture.Domain.ValueObjects;
 using FluentAssertions;
 using NUnit.Framework;
