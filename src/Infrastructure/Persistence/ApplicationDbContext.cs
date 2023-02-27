@@ -1,5 +1,8 @@
 ﻿using System.Reflection;
 using CleanArchitecture.Application.Common.Interfaces;
+using CleanArchitecture.Domain.Entities.Classroom;
+using CleanArchitecture.Domain.Entities.Parents;
+using CleanArchitecture.Domain.Entities.Schools;
 using CleanArchitecture.Domain.Entities.Todos;
 using CleanArchitecture.Infrastructure.Identity;
 using CleanArchitecture.Infrastructure.Persistence.Interceptors;
@@ -20,7 +23,7 @@ public class ApplicationDbContext : ApiAuthorizationDbContext<ApplicationUser>, 
         DbContextOptions<ApplicationDbContext> options,
         IOptions<OperationalStoreOptions> operationalStoreOptions,
         IMediator mediator,
-        AuditableEntitySaveChangesInterceptor auditableEntitySaveChangesInterceptor) 
+        AuditableEntitySaveChangesInterceptor auditableEntitySaveChangesInterceptor)
         : base(options, operationalStoreOptions)
     {
         _mediator = mediator;
@@ -30,6 +33,16 @@ public class ApplicationDbContext : ApiAuthorizationDbContext<ApplicationUser>, 
     public DbSet<TodoList> TodoLists => Set<TodoList>();
 
     public DbSet<TodoItem> TodoItems => Set<TodoItem>();
+
+    public DbSet<Parent> Parents => Set<Parent>();
+
+    public DbSet<Child> Children => Set<Child>();
+
+    public DbSet<School> Schools => Set<School>();
+
+    public DbSet<Classroom> Classrooms => Set<Classroom>();
+
+    public DbSet<ClassroomStudent> ClassroomStudents => Set<ClassroomStudent>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

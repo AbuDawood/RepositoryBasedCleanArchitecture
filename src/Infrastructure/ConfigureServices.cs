@@ -1,7 +1,11 @@
 ﻿using CleanArchitecture.Application.Common.Interfaces;
+using CleanArchitecture.Domain.Entities.Classroom;
+using CleanArchitecture.Domain.Entities.Parents;
+using CleanArchitecture.Domain.Entities.Schools;
 using CleanArchitecture.Infrastructure.Files;
 using CleanArchitecture.Infrastructure.Identity;
 using CleanArchitecture.Infrastructure.Persistence;
+using CleanArchitecture.Infrastructure.Persistence.EntityFrameworkRepositories;
 using CleanArchitecture.Infrastructure.Persistence.Interceptors;
 using CleanArchitecture.Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication;
@@ -51,6 +55,18 @@ public static class ConfigureServices
         services.AddAuthorization(options =>
             options.AddPolicy("CanPurge", policy => policy.RequireRole("Administrator")));
 
+        RegisterRepositories(services);
+
         return services;
+    }
+
+
+    private static void RegisterRepositories(IServiceCollection services)
+    {
+        services.AddScoped<IParentRepository, EfParentRepository>();
+
+        services.AddScoped<ISchoolRepository, EfSchoolRepository>();
+
+        services.AddScoped<IClassroomRepository, EfClassroomRepository>();
     }
 }
