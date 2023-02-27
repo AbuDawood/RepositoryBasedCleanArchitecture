@@ -13,6 +13,7 @@ public class Parent : BaseEntity<Guid>
     public Parent(Guid id, string firstname, string lastname) : base(id)
     {
         Firstname = firstname;
+
         Lastname = lastname;
     }
 
@@ -20,7 +21,7 @@ public class Parent : BaseEntity<Guid>
 
     public string Lastname { get; protected set; }
 
-    public ICollection<Child> Children { get; protected set; }
+    public ICollection<Child> Children { get; protected set; } = new HashSet<Child>();
 
     public void AddChild(string firstname, int age)
     {
@@ -34,6 +35,6 @@ public class Parent : BaseEntity<Guid>
             throw new FirstnameNotAvailableException(firstname);
         }
 
-        Children.Add(new Child(Guid.NewGuid(), firstname, Lastname, age));
+        Children.Add(new Child(Guid.NewGuid(), firstname, Lastname, age, this.Id));
     }
 }
