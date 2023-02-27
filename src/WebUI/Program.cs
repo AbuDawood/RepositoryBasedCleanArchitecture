@@ -1,4 +1,6 @@
 using CleanArchitecture.Infrastructure.Persistence;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -6,6 +8,15 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddApplicationServices();
 builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddWebUIServices();
+
+builder.Services.AddSwaggerGen(config =>
+{
+    config.SwaggerDoc("v1", new OpenApiInfo()
+    {
+        Title = " Clean Architecture API",
+        Version = "v1",
+    });
+});
 
 var app = builder.Build();
 
@@ -33,10 +44,25 @@ app.UseHealthChecks("/health");
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
-app.UseSwaggerUi3(settings =>
+//app.UseSwaggerUi3(settings =>
+//{
+//    settings.Path = "/api";
+//    //  settings.DocumentPath = "/api/specification.json";
+//    settings.RouteTemplate = "docs/{documentName}/swagger.json";
+//});
+
+app.UseSwagger(config =>
 {
-    settings.Path = "/api";
-    settings.DocumentPath = "/api/specification.json";
+    //config.Path = "/api";
+    config.RouteTemplate = "docs/{documentName}/swagger.json";
+
+});
+
+app.UseSwaggerUI(config =>
+{
+    config.RoutePrefix = "api";
+    config.DocumentTitle = "API";
+    config.SwaggerEndpoint("/docs/v1/swagger.json", " API v1");
 });
 
 app.UseRouting();
